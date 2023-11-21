@@ -43,9 +43,10 @@ class AppointmentController {
         try {
         const Appoitment = await this.appointmentService.findAppoitmentById(req.validatedId);
         sendResponse( res, Appoitment ? 200 : 404, Appoitment, Appoitment? ' ': 'No Appoitment found by this id');
-        return res.json(Appoitment);
+        //return res.json(Appoitment);
         }catch (err){
-            next(err);
+            //next(err);
+            sendResponse( res, 500, null, 'No Appointments');
         }
     }
     @Patch(`/updateappointment/:id`, [validateIdMiddlewareRequest])
@@ -54,8 +55,8 @@ class AppointmentController {
         const Appointment = await this.appointmentService.updateAppoitment(req.validatedId, req.body);
         sendResponse( res, Appointment ? 200 : 404, Appointment, Appointment? ' ': 'No Appoitment found by this id to update');
         return res.json(Appointment);
-        }catch (err){
-            next(err);
+        }catch (err: any) {
+            sendResponse( res, 500, null, 'An unexpected error occurred');
         }
     }
     @Delete(`/deleteappointment/:id`, [validateIdMiddlewareRequest])
@@ -69,7 +70,7 @@ class AppointmentController {
                 sendResponse(res, 404, null, err.message);
                 //res.status(404).json({ message: err.message });
             } else {
-                sendResponse(res, 500, null, err.message);
+                sendResponse(res, 500, null, 'An unexpected error occurred');
                 //res.status(500).json({ message: err.message });
             }
         }

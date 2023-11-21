@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import express from 'express';
-import AppointmentRouter from './routes/appointmentRoutes'; // Adjust the path as needed
+import AppointmentRouter from './routes/appointmentRoutes';
+import {errorHandlingMiddleware} from "./middleware/ErrorHandlingMiddleware"; // Adjust the path as needed
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(express.json());
 
 // Setup routes
 app.use('/appointments', AppointmentRouter);
+app.use(errorHandlingMiddleware);
 
 // Generic error handler (you can customize this)
 app.use((err: Error, req: Request, res: Response, next: Function) => {
