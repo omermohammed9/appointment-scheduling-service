@@ -1,14 +1,12 @@
 import {Request, Response} from "express";
 import express from 'express';
 import AppointmentRouter from './routes/appointmentRoutes';
-import {errorHandlingMiddleware} from "./middleware/ErrorHandlingMiddleware"; // Adjust the path as needed
+import {errorHandlingMiddleware} from "./middleware/ErrorHandlingMiddleware";
 
 const app = express();
 
-// Body Parser Middleware to parse JSON bodies
 app.use(express.json());
 
-// Setup routes
 app.use('/appointments', AppointmentRouter);
 app.use(errorHandlingMiddleware);
 

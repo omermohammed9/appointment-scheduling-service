@@ -8,8 +8,11 @@ export class Appointment extends BaseEntity {
     @Column()
     date!: Date;
 
+    @Column( { nullable: true })
+    timezone!: string;
+
     @Column()
-    time!: string;
+    AppointmentTime!: string;
 
     @Column()
     doctorName!: string;

@@ -13,7 +13,7 @@ export class UpdateAppointmentDTO {
     @IsString()
     @IsNotEmpty(({message: 'Time Zone is required'}))
     @IsTimeZone()
-    readonly time?: string;
+    readonly timezone?: string;
 
     @IsOptional()
     @IsString()

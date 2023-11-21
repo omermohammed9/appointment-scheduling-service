@@ -5,7 +5,8 @@ class CreateAppointmentDTO {
     @IsInt()
     readonly patientId!: number;
 
-    @IsDate()
+    @IsNotEmpty()
+    @IsString()
     readonly date!: Date;
 
     @IsOptional()
@@ -15,7 +16,7 @@ class CreateAppointmentDTO {
     readonly AppointmentTime?: string;
 
     @IsString()
-    readonly time!: string;
+    readonly timezone!: string;
 
     @IsString()
     readonly doctorName!: string;
