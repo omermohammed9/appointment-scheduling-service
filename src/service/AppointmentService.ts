@@ -1,8 +1,9 @@
-import { Appointment } from '../entity/Appointment';
-import { UpdateAppointmentDTO } from '../dto/UpdateAppointmentDTO';
+import {Appointment} from '../entity/Appointment';
+import {UpdateAppointmentDTO} from '../dto/UpdateAppointmentDTO';
 import AppointmentRepository from "../repository/AppointmentRepository";
 import CreateAppointmentDTO from "../dto/CreateAppointmentDTO";
 import axios from "axios";
+import {isDateTimeInFuture} from "../utils/DateUtils";
 
 class AppointmentService {
     private appointmentRepository: AppointmentRepository;
@@ -20,6 +21,7 @@ class AppointmentService {
         }
 
     }
+
     async findAllAppointments(): Promise<Appointment[]> {
         console.log("Service:findAllAppointments");
         const Appointments = await this.appointmentRepository.findAllAppointments();
@@ -31,13 +33,25 @@ class AppointmentService {
         return await this.appointmentRepository.findAppoitmentById({id});
     }
 
-    async createAppointment(appointment: Omit<CreateAppointmentDTO, 'id'>): Promise<Appointment> {
+
+    async createAppointment(appointment: Omit<CreateAppointmentDTO, 'id'>, ): Promise<Appointment> {
         const patientExists = await this.verifyPatientExists(appointment.patientId);
         if (!patientExists) {
             throw new Error('Patient does not exist');
         }
-        const newAppoitment = await this.appointmentRepository.createAppointment(appointment);
-        return newAppoitment;
+        if (!isDateTimeInFuture(appointment.date, appointment.AppointmentTime || '00:00', appointment.timezone)) {
+            throw new Error('Appointment time must be in the future.');
+        }
+        const isTaken = await this.appointmentRepository.isAppointmentSlotTaken(
+            appointment.date,
+            appointment.AppointmentTime || '00:00',
+            appointment.duration
+        );
+
+        if (isTaken) {
+            throw new Error('This appointment slot is already taken.');
+        }
+        return this.appointmentRepository.createAppointment(appointment);
     }
 
     async updateAppoitment(id: number, updateData: UpdateAppointmentDTO): Promise<Appointment | null> {

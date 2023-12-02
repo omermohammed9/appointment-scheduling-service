@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from 'typeorm';
+import {Min} from "class-validator";
 
 @Entity()
 export class Appointment extends BaseEntity {
@@ -8,11 +9,15 @@ export class Appointment extends BaseEntity {
     @Column()
     date!: Date;
 
-    @Column( { nullable: true })
+    @Column()
     timezone!: string;
 
-    @Column()
+    @Column() 
     AppointmentTime!: string;
+
+    @Column()
+    @Min(1)
+    duration!: number;
 
     @Column()
     doctorName!: string;

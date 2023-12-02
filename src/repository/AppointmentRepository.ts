@@ -1,7 +1,10 @@
-import {DataSource, FindOptionsWhere} from "typeorm";
+import {Between, DataSource, FindOptionsWhere} from "typeorm";
 import {Appointment} from "../entity/Appointment";
 import CreateAppointmentDTO from "../dto/CreateAppointmentDTO";
 import {UpdateAppointmentDTO} from "../dto/UpdateAppointmentDTO";
+import moment from "moment-timezone";
+import {calculateStartEndDateTime} from "../utils/calculateStartEndDateTime";
+import {checkOverlappingAppointments} from "../utils/appointmentUtils";
 
 class AppointmentRepository {
     private AppointmentRepository;
@@ -9,10 +12,15 @@ class AppointmentRepository {
     constructor(private database: DataSource) {
         this.AppointmentRepository = this.database.getRepository(Appointment);
     }
+    async isAppointmentSlotTaken(date: Date, time: string, duration: number, excludeAppointmentId?: number): Promise<boolean> {
+        const { startDateTime, endDateTime } = calculateStartEndDateTime(date, time, duration);
+        const overlappingCount = await checkOverlappingAppointments(this.AppointmentRepository, date, startDateTime, endDateTime, excludeAppointmentId);
+        return overlappingCount > 0;
+    }
     async findAllAppointments(): Promise<Appointment[]> {
         console.log("Repository:findAllAppointments");
         const Appointments = await this.AppointmentRepository.find();
-        console.log(`Appointments Repository: Found ${(await Appointments).length} Appointments`);
+        console.log(`Appointments Repository: Found ${Appointments.length} Appointments`);
         return Appointments;
     }
 

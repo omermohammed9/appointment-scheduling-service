@@ -1,5 +1,5 @@
-import {IsOptional, IsDateString, IsString, IsNotEmpty, IsTimeZone, IsInt} from 'class-validator';
-import {IsTimeFormat} from "./TimeFormat";
+import {IsOptional, IsDateString, IsString, IsNotEmpty, IsTimeZone, IsInt, Min} from 'class-validator';
+import {IsTimeFormat} from "../utils/TimeFormat";
 
 export class UpdateAppointmentDTO {
     @IsInt()
@@ -20,6 +20,12 @@ export class UpdateAppointmentDTO {
     @IsNotEmpty({message: 'Time Zone is required'})
     @IsTimeFormat({ message: 'Appointment Time must be in the format HH:MM AM/PM' })
     readonly AppointmentTime?: string;
+
+    @IsInt()
+    @IsNotEmpty({message: 'Duration is required'})
+    @Min(1)
+
+    readonly duration!: number;
 
     @IsOptional()
     @IsString()
