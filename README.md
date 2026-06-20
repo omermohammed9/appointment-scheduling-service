@@ -1,5 +1,5 @@
 > [!WARNING]
-> **DEPRECATED**: This service has been migrated into the unified Hospital Microservices Monorepo. Please view the new repository here: [Hospital Microservices Workspace](https://github.com/YOUR-USERNAME/hospital-microservices-workspace)
+> **DEPRECATED**: This service has been migrated into the unified Hospital Microservices Monorepo. Please view the new repository here: [SumerCare](https://github.com/omermohammed9/SumerCare-)
 
 # Appointment Scheduling Service
 
