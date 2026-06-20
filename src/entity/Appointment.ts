@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index} from 'typeorm';
 import {Min} from "class-validator";
 
 @Entity()
@@ -6,6 +6,7 @@ export class Appointment extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Index()
     @Column()
     date!: Date;
 
@@ -22,6 +23,10 @@ export class Appointment extends BaseEntity {
     @Column()
     doctorName!: string;
 
+    @Index()
     @Column()
     patientId!: number;
+
+    @Column({ default: 'SCHEDULED' })
+    status!: string;
 }

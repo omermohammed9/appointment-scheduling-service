@@ -8,7 +8,8 @@ export function IsTimeFormat(validationOptions?: ValidationOptions) {
             propertyName: propertyName,
             options: validationOptions,
             validator: {
-                validate(value: any): boolean {
+                validate(value: unknown): boolean {
+                    if (typeof value !== 'string') return false;
                     /*
                         ^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$ matches times in 12-hour format with AM/PM.
                         ^(2[0-3]|[01]?[0-9]):[0-5][0-9]$ matches times in 24-hour format without AM/PM.

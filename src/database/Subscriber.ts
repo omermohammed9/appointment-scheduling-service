@@ -1,5 +1,5 @@
 import { EntitySubscriberInterface, EventSubscriber, InsertEvent } from "typeorm";
-import {Appointment} from "../entity/Appointment";
+import {Appointment} from "@/entity/Appointment";
 
 @EventSubscriber()
  class PatientSubscriber implements EntitySubscriberInterface<Appointment> {

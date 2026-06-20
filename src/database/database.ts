@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import {PostgresDataSourceOptions} from "./PostgresDataSourceOptions";
+import {PostgresDataSourceOptions} from "@/database/PostgresDataSourceOptions";
 
 
 const AppDataSource = new DataSource(PostgresDataSourceOptions())

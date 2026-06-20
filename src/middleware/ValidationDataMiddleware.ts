@@ -10,7 +10,12 @@ export function validationDataMiddleware<T extends object>(type: new () => T ): 
         const errors: ValidationError[] = await validate(validationObj);
         if (errors.length > 0) {
             console.log("VALIDATION ERRORS", errors);
-            return res.status(400).json({ errors });
+            const message = 'Validation failed: ' + errors.map(err => Object.values(err.constraints || {}).join(', ')).join('; ');
+            return res.status(400).json({
+                status: "error",
+                message,
+                statusCode: 400
+            });
         } else {
             next();
         }
@@ -20,7 +25,11 @@ export function validationDataMiddleware<T extends object>(type: new () => T ): 
 export const validateIdMiddlewareRequest  = (req: Request, res: Response, next: NextFunction)  => {
     const id = +req.params.id;
     if (!id || isNaN(Number(id))) {
-        return res.status(400).json({ message: 'ID provided is NOT a number' });
+        return res.status(400).json({
+            status: "error",
+            message: 'ID provided is NOT a number',
+            statusCode: 400
+        });
     }
     req.validatedId = id;
     next();

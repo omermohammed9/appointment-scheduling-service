@@ -1,12 +1,19 @@
-import {Between, DataSource, FindOptionsWhere} from "typeorm";
-import {Appointment} from "../entity/Appointment";
-import CreateAppointmentDTO from "../dto/CreateAppointmentDTO";
-import {UpdateAppointmentDTO} from "../dto/UpdateAppointmentDTO";
-import moment from "moment-timezone";
-import {calculateStartEndDateTime} from "../utils/calculateStartEndDateTime";
-import {checkOverlappingAppointments} from "../utils/appointmentUtils";
+/**
+ * @file AppointmentRepository.ts
+ * @description Repository class for managing Appointment entity data access in PostgreSQL via TypeORM.
+ * Handles complex business logic queries like checking for overlapping appointments.
+ * @dependencies TypeORM, CustomErrors
+ */
+import {DataSource, FindOptionsWhere} from "typeorm";
+import {Appointment} from "@/entity/Appointment";
+import CreateAppointmentDTO from "@/dto/CreateAppointmentDTO";
+import {UpdateAppointmentDTO} from "@/dto/UpdateAppointmentDTO";
+import {calculateStartEndDateTime} from "@/utils/calculateStartEndDateTime";
+import {checkOverlappingAppointments} from "@/utils/appointmentUtils";
+import { BadRequestError, NotFoundError } from '@/utils/CustomErrors';
+import { IAppointmentRepository } from '@/repository/IAppointmentRepository';
 
-class AppointmentRepository {
+class AppointmentRepository implements IAppointmentRepository {
     private AppointmentRepository;
 
     constructor(private database: DataSource) {
@@ -27,7 +34,7 @@ class AppointmentRepository {
     async findAppoitmentById(criteria: Partial<Appointment>): Promise<Appointment | null> {
         console.log("Repository:findAppoitmentById");
         if ('id' in criteria && typeof criteria.id !== 'number') {
-            throw new Error('Invalid ID provided');
+            throw new BadRequestError('Invalid ID provided');
         }
         return await this.AppointmentRepository.findOneBy(criteria as FindOptionsWhere<Appointment>);
     }
@@ -57,7 +64,7 @@ class AppointmentRepository {
         console.log("Repository: delete Appoitment started");
         const DeleteAppoitment = await this.AppointmentRepository.delete(id);
         if (DeleteAppoitment.affected === 0) {
-            throw new Error('No patient found with the given ID.');
+            throw new NotFoundError('No patient found with the given ID.');
         }
         return null;
     }

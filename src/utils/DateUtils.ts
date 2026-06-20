@@ -1,5 +1,4 @@
 import moment from 'moment';
-import exp from "constants";
 
 export function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
     return moment(date).format(format);

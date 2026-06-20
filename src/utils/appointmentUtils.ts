@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'; // Adjust import based on your ORM
-import { Appointment } from '../entity/Appointment';
+import { Appointment } from '@/entity/Appointment';
 import moment from "moment"; // Adjust import based on your entity structure
 
 export async function checkOverlappingAppointments(

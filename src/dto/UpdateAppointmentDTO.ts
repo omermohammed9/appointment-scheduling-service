@@ -1,9 +1,10 @@
-import {IsOptional, IsDateString, IsString, IsNotEmpty, IsTimeZone, IsInt, Min} from 'class-validator';
-import {IsTimeFormat} from "../utils/TimeFormat";
+import {IsOptional, IsDateString, IsString, IsNotEmpty, IsTimeZone, IsInt, Min, Matches} from 'class-validator';
 
 export class UpdateAppointmentDTO {
+    @IsOptional()
     @IsInt()
-    readonly patientId!: number;
+    @Min(1)
+    readonly patientId?: number;
 
     @IsOptional()
     @IsDateString()
@@ -11,23 +12,27 @@ export class UpdateAppointmentDTO {
 
     @IsOptional()
     @IsString()
-    @IsNotEmpty(({message: 'Time Zone is required'}))
+    @IsNotEmpty({message: 'Time Zone is required'})
     @IsTimeZone()
     readonly timezone?: string;
 
     @IsOptional()
     @IsString()
-    @IsNotEmpty({message: 'Time Zone is required'})
-    @IsTimeFormat({ message: 'Appointment Time must be in the format HH:MM AM/PM' })
+    @Matches(/^\d{2}:\d{2}$/, {
+        message: 'Appointment Time must be in the format HH:MM'
+    })
     readonly AppointmentTime?: string;
 
+    @IsOptional()
     @IsInt()
-    @IsNotEmpty({message: 'Duration is required'})
     @Min(1)
-
-    readonly duration!: number;
+    readonly duration?: number;
 
     @IsOptional()
     @IsString()
     readonly doctorName?: string;
+
+    @IsOptional()
+    @IsString()
+    readonly status?: string;
 }

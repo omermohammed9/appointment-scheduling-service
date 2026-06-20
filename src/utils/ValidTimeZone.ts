@@ -9,7 +9,8 @@ export function IsValidTimeZone(validationOptions?: ValidationOptions) {
             propertyName: propertyName,
             options: validationOptions,
             validator: {
-                validate(value: any): boolean {
+                validate(value: unknown): boolean {
+                    if (typeof value !== 'string') return false;
                     return typeof value === 'string' && moment.tz.zone(value) !== null;
                 },
                 defaultMessage(args: ValidationArguments) {

@@ -1,10 +1,12 @@
 import {Request, Response} from "express";
 import {DataSource} from "typeorm";
-import AppointmentRepository from "../repository/AppointmentRepository";
-import AppointmentService from "../service/AppointmentService";
+import AppointmentRepository from "@/repository/AppointmentRepository";
+import AppointmentService from "@/service/AppointmentService";
 import {Controller, Delete, Get, Next, Patch, Post, Req, Res} from "@decorators/express";
-import sendResponse from "../ResponseHelper/ResponseHelper";
-import {validateIdMiddlewareRequest} from "../middleware/ValidationDataMiddleware";
+import sendResponse from "@/ResponseHelper/ResponseHelper";
+import {validateIdMiddlewareRequest, validationDataMiddleware} from "@/middleware/ValidationDataMiddleware";
+import CreateAppointmentDTO from "@/dto/CreateAppointmentDTO";
+import {UpdateAppointmentDTO} from "@/dto/UpdateAppointmentDTO";
 
 @Controller(`/appointment`)
 class AppointmentController {
@@ -16,7 +18,7 @@ class AppointmentController {
     }
 
 
-    @Post(`/create`)
+    @Post(`/create`, [validationDataMiddleware(CreateAppointmentDTO)])
     async createAppointment(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
         try {
         const appointment = req.body;
@@ -41,41 +43,30 @@ class AppointmentController {
     @Get(`/getappointment/:id`, [validateIdMiddlewareRequest])
     async getAppoitmentById(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
         try {
-        const Appoitment = await this.appointmentService.findAppoitmentById(req.validatedId);
-        sendResponse( res, Appoitment ? 200 : 404, Appoitment, Appoitment? ' ': 'No Appoitment found by this id');
-        //return res.json(Appoitment);
-        }catch (err){
-            //next(err);
-            sendResponse( res, 500, null, 'No Appointments');
+            const Appoitment = await this.appointmentService.findAppoitmentById(req.validatedId);
+            sendResponse( res, Appoitment ? 200 : 404, Appoitment, Appoitment? '': 'No Appointment found by this id');
+        } catch (err){
+            next(err);
         }
     }
-    @Patch(`/updateappointment/:id`, [validateIdMiddlewareRequest])
+    @Patch(`/updateappointment/:id`, [validateIdMiddlewareRequest, validationDataMiddleware(UpdateAppointmentDTO)])
     async updateAppoitment(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
         try {
-        const Appointment = await this.appointmentService.updateAppoitment(req.validatedId, req.body);
-        sendResponse( res, Appointment ? 200 : 404, Appointment, Appointment? ' ': 'No Appoitment found by this id to update');
-        return res.json(Appointment);
-        }catch (err: any) {
-            sendResponse( res, 500, null, 'An unexpected error occurred');
+            const Appointment = await this.appointmentService.updateAppoitment(req.validatedId, req.body);
+            sendResponse( res, Appointment ? 200 : 404, Appointment, Appointment? '': 'No Appointment found by this id to update');
+        } catch (err) {
+            next(err);
         }
     }
     @Delete(`/deleteappointment/:id`, [validateIdMiddlewareRequest])
     async deleteAppoitment(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
         try {
-             await this.appointmentService.deleteAppoitment(req.validatedId);
-        sendResponse( res, 200, null,  'Appoitment deleted successfully');
-        //return res.json(Appoitment);
-        }catch (err: any) {
-            if (err.message === 'Appoitment not found') {
-                sendResponse(res, 404, null, err.message);
-                //res.status(404).json({ message: err.message });
-            } else {
-                sendResponse(res, 500, null, 'An unexpected error occurred');
-                //res.status(500).json({ message: err.message });
-            }
+            await this.appointmentService.deleteAppoitment(req.validatedId);
+            sendResponse( res, 200, null,  'Appointment deleted successfully');
+        } catch (err) {
+            next(err);
         }
     }
 }
-
 
 export default AppointmentController;
